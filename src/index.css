@@ -1,5 +1,14 @@
+@font-face {
+  font-family: 'JakartaSansFull';
+  src: url('https://cdn.jsdelivr.net/gh/tokotype/PlusJakartaSans@master/fonts/webfonts/PlusJakartaSans-Regular.woff2')
+    format('woff2');
+  font-style: normal;
+}
+
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  /* font-family: system-ui, Avenir, Helvetica, Arial, sans-serif; */
+  font-family: 'JakartaSansFull', sans-serif;
+  font-feature-settings: 'ss01', 'ss02', 'ss03' 0;
   line-height: 1.5;
   font-weight: 400;
 
