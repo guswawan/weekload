@@ -6,57 +6,57 @@ import { supabase } from '../integrations/supabase/client';
 const AUTH_QUERY_KEY = ['auth', 'session'] as const;
 
 export function useSession() {
-  const queryClient = useQueryClient();
+	const queryClient = useQueryClient();
 
-  const { data: session, isLoading } = useQuery<Session | null>({
-    queryKey: AUTH_QUERY_KEY,
-    queryFn: async () => {
-      const { data } = await supabase.auth.getSession();
-      return data.session;
-    },
-    staleTime: Infinity, // Session doesn't become stale automatically
-  });
+	const { data: session, isLoading } = useQuery<Session | null>({
+		queryKey: AUTH_QUERY_KEY,
+		queryFn: async () => {
+			const { data } = await supabase.auth.getSession();
+			return data.session;
+		},
+		staleTime: Infinity, // Session doesn't become stale automatically
+	});
 
-  useEffect(() => {
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      queryClient.setQueryData(AUTH_QUERY_KEY, session);
-    });
+	useEffect(() => {
+		const {
+			data: { subscription },
+		} = supabase.auth.onAuthStateChange((_event, session) => {
+			queryClient.setQueryData(AUTH_QUERY_KEY, session);
+		});
 
-    return () => subscription.unsubscribe();
-  }, [queryClient]);
+		return () => subscription.unsubscribe();
+	}, [queryClient]);
 
-  return { session, isLoading };
+	return { session, isLoading };
 }
 
 export function useGoogleLogin() {
-  const queryClient = useQueryClient();
+	const queryClient = useQueryClient();
 
-  return useMutation({
-    mutationFn: async () => {
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
-      });
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      // The session will be updated via onAuthStateChange listener
-      queryClient.invalidateQueries({ queryKey: AUTH_QUERY_KEY });
-    },
-  });
+	return useMutation({
+		mutationFn: async () => {
+			const { error } = await supabase.auth.signInWithOAuth({
+				provider: 'google',
+			});
+			if (error) throw error;
+		},
+		onSuccess: () => {
+			// The session will be updated via onAuthStateChange listener
+			queryClient.invalidateQueries({ queryKey: AUTH_QUERY_KEY });
+		},
+	});
 }
 
 export function useLogout() {
-  const queryClient = useQueryClient();
+	const queryClient = useQueryClient();
 
-  return useMutation({
-    mutationFn: async () => {
-      const { error } = await supabase.auth.signOut();
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      queryClient.setQueryData(AUTH_QUERY_KEY, null);
-    },
-  });
+	return useMutation({
+		mutationFn: async () => {
+			const { error } = await supabase.auth.signOut();
+			if (error) throw error;
+		},
+		onSuccess: () => {
+			queryClient.setQueryData(AUTH_QUERY_KEY, null);
+		},
+	});
 }

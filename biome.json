@@ -7,7 +7,7 @@
   },
   "files": {
     "ignoreUnknown": false,
-    "includes": ["src/**"]
+    "includes": ["src/**", "!src/components/ui"]
   },
   "formatter": {
     "enabled": true,
@@ -37,8 +37,7 @@
   },
   "overrides": [
     {
-      "include": ["src/**"],
-      "exclude": ["src/components/ui/**"],
+      "includes": ["src/**", "!src/components/ui/**"],
       "assist": {
         "actions": {
           "source": {
