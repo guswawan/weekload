@@ -1,63 +1,32 @@
-import type { Session } from '@supabase/supabase-js';
-import { useEffect, useState } from 'react';
-import { supabase } from './supabaseClient';
+import { RouterProvider } from '@tanstack/react-router';
+import { useEffect, useRef } from 'react';
+import { useSession } from './hooks/useAuth';
+import { router } from './routes/router';
 import './App.css';
 
 function App() {
-	const [session, setSession] = useState<Session | null>(null);
+	const { session, isLoading } = useSession();
+	const prevSessionIdRef = useRef<string | null>(null);
 
 	useEffect(() => {
-		supabase.auth.getSession().then(({ data: { session } }) => {
-			setSession(session);
-		});
+		if (isLoading) return;
+		const nextSessionId = session?.user.id ?? null;
+		if (prevSessionIdRef.current === nextSessionId) return;
+		prevSessionIdRef.current = nextSessionId;
+		router.invalidate();
+	}, [isLoading, session]);
 
-		const {
-			data: { subscription },
-		} = supabase.auth.onAuthStateChange((_event, session) => {
-			setSession(session);
-		});
-
-		return () => subscription.unsubscribe();
-	}, []);
-
-	const googleLogin = async () => {
-		await supabase.auth.signInWithOAuth({
-			provider: 'google',
-		});
-	};
-
-	const logout = async () => {
-		await supabase.auth.signOut();
-	};
-
-	if (!session) {
+	if (isLoading) {
 		return (
 			<div
 				style={{ display: 'flex', justifyContent: 'center', marginTop: '50px' }}
 			>
-				<button type="button" onClick={googleLogin}>
-					Login with Google
-				</button>
+				<p>Loading...</p>
 			</div>
 		);
 	}
 
-	return (
-		<div style={{ textAlign: 'center', marginTop: '50px' }}>
-			<h1>Halo, {session.user.user_metadata.full_name}!</h1>
-			<p>{session.user.email}</p>
-			<img
-				src={session.user.user_metadata.avatar_url}
-				alt="Avatar"
-				style={{ borderRadius: '50%', width: '100px' }}
-			/>
-			<br />
-			<br />
-			<button type="button" onClick={logout}>
-				Sign Out
-			</button>
-		</div>
-	);
+	return <RouterProvider router={router} context={{ session }} />;
 }
 
 export default App;
