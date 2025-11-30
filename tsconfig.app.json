@@ -23,6 +23,10 @@
     "erasableSyntaxOnly": true,
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true
+
+    /* Path Aliases tidak di-set di sini - hanya untuk components/ui via tsconfig.ui.json */
+    /* Jika ada absolute import (@/) di luar components/ui, TypeScript akan error */
   },
-  "include": ["src"]
+  "include": ["src"],
+  "exclude": ["src/components/ui/**/*"]
 }

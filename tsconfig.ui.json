@@ -1,0 +1,13 @@
+{
+  "extends": "./tsconfig.app.json",
+  "compilerOptions": {
+    /* Path Aliases - hanya untuk components/ui */
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    },
+    /* Disable verbatimModuleSyntax untuk components/ui */
+    "verbatimModuleSyntax": false
+  },
+  "include": ["src/components/ui/**/*"]
+}
