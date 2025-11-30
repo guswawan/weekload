@@ -8,6 +8,5 @@
     },
     /* Disable verbatimModuleSyntax untuk components/ui */
     "verbatimModuleSyntax": false
-  },
-  "include": ["src/components/ui/**/*"]
+  }
 }
