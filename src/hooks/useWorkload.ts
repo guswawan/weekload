@@ -1,9 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useSession } from './useAuth';
+import { getIsoWeeksInYear } from '../lib/utils';
 import { supabase } from '../integrations/supabase/client';
 import type { WeekData, WorkloadStatus } from '../types/workload';
-
-const WEEKS_PER_YEAR = 52;
+import { useSession } from './useAuth';
 
 const WORKLOAD_QUERY_KEY = (year: number, userId: string) =>
 	['workload', 'weeks', year, userId] as const;
@@ -19,9 +18,11 @@ export function useWorkloadWeeks(year: number) {
 	} = useQuery<WeekData[]>({
 		queryKey: WORKLOAD_QUERY_KEY(year, session?.user.id ?? ''),
 		queryFn: async () => {
+			const weeksInYear = getIsoWeeksInYear(year);
+
 			if (!session) {
 				// Return empty weeks if no session
-				return Array.from({ length: WEEKS_PER_YEAR }, (_, i) => ({
+				return Array.from({ length: weeksInYear }, (_, i) => ({
 					weekNumber: i + 1,
 					status: 'undefined' as WorkloadStatus,
 				}));
@@ -35,9 +36,9 @@ export function useWorkloadWeeks(year: number) {
 
 			if (fetchError) throw fetchError;
 
-			// Create all 52 weeks, filling in saved data where it exists
+			// Create all ISO weeks, filling in saved data where it exists
 			const allWeeks: WeekData[] = Array.from(
-				{ length: WEEKS_PER_YEAR },
+				{ length: weeksInYear },
 				(_, i) => {
 					const weekNumber = i + 1;
 					const savedWeek = data?.find((w) => w.week_number === weekNumber);

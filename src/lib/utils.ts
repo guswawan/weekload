@@ -2,27 +2,41 @@ import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
 export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
+	return twMerge(clsx(inputs));
 }
 
-const MS_IN_WEEK = 7 * 24 * 60 * 60 * 1000;
+const MILLISECONDS_IN_DAY = 86400000; // 24 jam * 60 menit * 60 detik * 1000 ms
 
-// ISO 8601 week number
-export function getIsoWeek(date: Date = new Date()): number {
-  const isoDate = new Date(
-    Date.UTC(date.getFullYear(), date.getMonth(), date.getDate())
-  );
+export function getIsoWeek(inputDate: Date): number {
+	const workingDate = new Date(
+		Date.UTC(
+			inputDate.getFullYear(),
+			inputDate.getMonth(),
+			inputDate.getDate(),
+		),
+	);
 
-  const isoDay = isoDate.getUTCDay() || 7;
-  isoDate.setUTCDate(isoDate.getUTCDate() + 4 - isoDay);
+	const dayOfWeek = workingDate.getUTCDay() || 7;
+	workingDate.setUTCDate(workingDate.getUTCDate() + 4 - dayOfWeek);
 
-  const isoYear = isoDate.getUTCFullYear();
-  const yearStart = new Date(Date.UTC(isoYear, 0, 1));
-  const startDay = yearStart.getUTCDay() || 7;
-  const firstThursday = new Date(yearStart);
-  firstThursday.setUTCDate(yearStart.getUTCDate() + (4 - startDay));
+	const isoYear = workingDate.getUTCFullYear();
+	const firstDayOfYear = new Date(Date.UTC(isoYear, 0, 1));
 
-  return (
-    1 + Math.round((isoDate.getTime() - firstThursday.getTime()) / MS_IN_WEEK)
-  );
+	const differenceInMilliseconds =
+		workingDate.getTime() - firstDayOfYear.getTime();
+
+	const differenceInDays = differenceInMilliseconds / MILLISECONDS_IN_DAY;
+
+	return Math.ceil((differenceInDays + 1) / 7);
+}
+
+export function getIsoWeeksInYear(year: number): number {
+	const date = new Date(year, 0, 1);
+	const isLeap = new Date(year, 1, 29).getMonth() === 1;
+	const day = date.getDay();
+
+	if (day === 4 || (isLeap && day === 3)) {
+		return 53;
+	}
+	return 52;
 }
