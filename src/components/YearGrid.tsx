@@ -1,5 +1,6 @@
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { getIsoWeek } from '../lib/utils';
 import { useToast } from '../hooks/useToast';
 import { useWorkloadWeeks } from '../hooks/useWorkload';
 import type { WorkloadStatus } from '../types/workload';
@@ -8,20 +9,12 @@ import { Button } from './ui/button';
 import { WeekActionDialog } from './WeekActionDialog';
 import { WeekCircle } from './WeekCircle';
 
-const getCurrentWeek = (): number => {
-	const now = new Date();
-	const start = new Date(now.getFullYear(), 0, 1);
-	const diff = now.getTime() - start.getTime();
-	const oneWeek = 1000 * 60 * 60 * 24 * 7;
-	return Math.ceil(diff / oneWeek);
-};
-
 export const YearGrid = () => {
 	const [year, setYear] = useState(new Date().getFullYear());
 	const [selectedWeek, setSelectedWeek] = useState<number | null>(null);
 	const [showActionDialog, setShowActionDialog] = useState(false);
 	const [showStatusSelector, setShowStatusSelector] = useState(false);
-	const currentWeek = getCurrentWeek();
+	const currentWeek = getIsoWeek(new Date());
 	const { toast } = useToast();
 
 	const { weeks, isLoading, error, updateStatus, updateNotes } =

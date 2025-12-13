@@ -11,9 +11,7 @@ const Auth = () => {
 		<div className="min-h-screen flex items-center justify-center bg-background px-4">
 			<div className="w-full max-w-md rounded-xl border border-border bg-card p-8 text-center shadow-sm space-y-6">
 				<div className="space-y-2">
-					<h1 className="text-3xl font-semibold text-foreground">
-						Workload Tracker
-					</h1>
+					<h1 className="text-3xl font-semibold text-foreground">Weekload</h1>
 					<p className="text-muted-foreground">
 						Sign in to start tracking your weekly workload.
 					</p>
@@ -26,7 +24,7 @@ const Auth = () => {
 				>
 					{googleLoginMutation.isPending
 						? 'Logging in...'
-						: 'Login with Google'}
+						: 'Continue with Google'}
 				</button>
 			</div>
 		</div>
